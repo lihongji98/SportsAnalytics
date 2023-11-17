@@ -1,0 +1,30 @@
+List all Pase Exitoso with a duration greater than 4 seconds
+Solution:
+-
+-
+-
+
+List all different players who have shot ordered by origin_player
+Solution:
+-
+-
+-
+
+Number of attacks from teams 1 and 11
+Solution:
+-
+-
+-
+
+Remove all Event whose origin is less than 0.0 or greater than 1.0
+Solution:
+-
+-
+-
+
+Compute the distance of each event named distance
+Hint: The pitch dimensions are 105 meters for x-axis and 68 meters for y-axis
+Solution:
+-
+-
+-
