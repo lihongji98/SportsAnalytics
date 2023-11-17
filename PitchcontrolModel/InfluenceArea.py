@@ -54,8 +54,7 @@ class InfluenceArea:
         cov_matrix = np.dot(np.dot(np.dot(r, s), s), np.linalg.inv(r))
         inverse_cov = np.linalg.inv(cov_matrix)
 
-        assert type(self.player_pos) == type(mean) and self.player_pos.shape == mean.shape, \
-            "player position is not compatible with the mean vector."
+        assert self.player_pos.shape == mean.shape, "player position is not compatible with the mean vector."
         coef_infer_influence = (-0.5) * np.dot(
             np.dot((self.infer_pos - mean).T, inverse_cov),
             (self.infer_pos - mean))
