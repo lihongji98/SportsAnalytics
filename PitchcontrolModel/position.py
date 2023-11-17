@@ -9,22 +9,27 @@ TODO:
 
 
 def position():
-    player_position_name = ["GK",
-                            "RWB", "RB", "LB", "LWB",
-                            "CDM", "RM", "LM",
-                            "RW", "ST", "LW"
+    player_position_name = ["p1",
+                            "p2", "p3", "p4", "p5",
+                            "p6", "p7", "p8",
+                            "p9", "p10", "p11"
                             ]
     home_player_position_coordinate = [[19, 31],
                                        [61, 10], [43, 20], [43, 33], [52, 50],
                                        [52, 26], [70, 8], [60, 34],
                                        [81, 5], [80, 25], [75, 40]
                                        ]
-
     away_player_position_coordinate = [[98, 33],
                                        [64, 41], [78, 39], [81, 26], [82, 6],
                                        [64, 31], [77, 20], [78, 8],
                                        [49, 30], [50, 15], [69, 8]
                                        ]
+    
+    home_player_angle = []
+    away_player_angle = []
+
+    home_player_velocity = []
+    away_player_velocity = []
 
     ball_position = [81, 5]
 
@@ -41,5 +46,9 @@ def position():
                               'away_xy': away_player_position_coordinate,
                               'away_distance': away_player_distance})
 
-    position_info = pd.merge(home_team, away_team, on=["pos"], how="inner")
+    position_info = pd.merge(home_team, away_team, on=["pos"], how="inner").T
+
     return position_info
+
+a = position()
+print(a[0].values)

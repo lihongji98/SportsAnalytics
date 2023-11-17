@@ -1,10 +1,10 @@
 """
 Required data:
 infer postion -> X,Y ==== pitch_map
-player's coordinate -> x,y
-player's velocity -> vel
-player's angle -> theta
-the distance to the ball -> distance
+player's coordinate -> x,y              (from database)
+player's velocity -> vel                (from database)
+player's angle -> theta                 (from database)
+the distance to the ball -> distance    (from database)
 """
 
 import numpy as np
