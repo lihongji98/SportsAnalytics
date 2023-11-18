@@ -22,6 +22,7 @@ TODO:
     need read_data function or not
 """
 
+
 class PitchControl(InfluenceArea):
     def __init__(self):
         super(PitchControl, self).__init__()
@@ -31,4 +32,3 @@ class PitchControl(InfluenceArea):
 
     def compute_pitchControl(self):
         pass
-

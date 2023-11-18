@@ -11,14 +11,14 @@ import numpy as np
 
 
 class InfluenceArea:
-    def __init__(self, 
+    def __init__(self,
                  pitch_length: int,
                  pitch_width: int
                  ):
         self.width = max(pitch_length, pitch_width)
         self.length = min(pitch_width, pitch_length)
-        self.pitch_map = np.array([[i, j] for i in range(self.length) for j in range(self.width)]) \
-                                                            .reshape(self.length, self.width, 2, 1)
+        self.pitch_map = (np.array([[i, j] for i in range(self.length) for j in range(self.width)]).
+                          reshape(self.length, self.width, 2, 1))
         """
         The standard football pitch size:
             length: 100.58 m
@@ -29,7 +29,7 @@ class InfluenceArea:
         if ball_dist >= 19:
             radius = 10
         else:
-            radius = 6 / 18**2 * ball_dist**2 + 4
+            radius = 6 / 18 ** 2 * ball_dist ** 2 + 4
 
         return radius
 
@@ -48,49 +48,39 @@ class InfluenceArea:
 
     def rotation_matrix(self, player_ang):
         return np.array([[np.cos(player_ang), -np.sin(player_ang)],
-                         [np.sin(player_ang),  np.cos(player_ang)]])
+                         [np.sin(player_ang), np.cos(player_ang)]])
 
-    def normalized_influence(self, infer_pos, player_pos, player_vel, player_ang, ball_dist):
-        infer_pos = infer_pos.reshape(-1, 1)
+    def area_influence_surface(self, player_pos, player_vel, player_ang, ball_dist):
         player_pos = player_pos.reshape(-1, 1)
-
         r, s = self.rotation_matrix(player_ang), self.scaling_matrix(player_vel, ball_dist)
-
-        v_x = player_vel
-        v_y = player_vel
-        center_movement = np.array([0.5 * v_x, 0.5 * v_y]).reshape(-1, 1)
-
+        center_movement = np.array([0.5 * player_vel, 0.5 * player_vel]).reshape(-1, 1)
         mean = player_pos + center_movement
 
         cov_matrix = np.dot(np.dot(np.dot(r, s), s), np.linalg.inv(r))
         inverse_cov = np.linalg.inv(cov_matrix)
 
         assert player_pos.shape == mean.shape, "player position is not compatible with the mean vector."
-        
-        coef_infer_influence = (-0.5) * np.dot(
-            np.dot((infer_pos - mean).T, inverse_cov),
-            (infer_pos - mean))
+        print(mean.shape, self.pitch_map.shape)
+        coefficient_infer_influence = (-0.5) * np.matmul(
+            np.matmul(
+                np.transpose((self.pitch_map - mean), axes=(0, 1, 3, 2)), inverse_cov),
+            (self.pitch_map - mean)
+        )
 
-        coef_standarlized = (-0.5) * np.dot(
-            np.dot((mean - mean).T, inverse_cov),
-            (mean - mean))
+        coefficient_standardized = (-0.5) * np.matmul(
+            np.matmul(
+                np.transpose(np.zeros_like(self.pitch_map), axes=(0, 1, 3, 2)), inverse_cov),
+            np.zeros_like(self.pitch_map)
+        )
 
-        influence = np.exp(coef_infer_influence - coef_standarlized)
+        influence = np.exp(coefficient_infer_influence - coefficient_standardized)
 
-        return influence.flatten()[0]
-    
-    def area_influence_surface(self, player_pos, player_vel, player_ang, ball_dist):
-        area_influence_surface = []
-        for i in range(self.length):
-            for j in range(self.width):
-                point_ai= self.normalized_influence(self.pitch_map[i][j], player_pos, player_vel, player_ang, ball_dist)
-                area_influence_surface.append(point_ai)
-        return np.array(area_influence_surface).reshape(self.length, self.width)
+        return np.squeeze(influence, axis=(2, 3))
 
     def check(self):
-        influence = self.area_influence_surface(
-                                              player_pos = np.array([15,15]), 
-                                              player_vel = 6.36, 
-                                              player_ang = np.pi / 4, 
-                                              ball_dist = 15)
+        influence = self.normalized_influence(
+            player_pos=np.array([15, 15]),
+            player_vel=6.36,
+            player_ang=np.pi / 4,
+            ball_dist=15)
         print(influence)
