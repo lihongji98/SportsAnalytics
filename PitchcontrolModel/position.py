@@ -1,12 +1,6 @@
 import pandas as pd
 import numpy as np
 
-"""
-TODO:
-1. Reformat the position to np.array
-2. Compute the distance to the ball
-"""
-
 
 def position():
     player_position_name = ["p1",

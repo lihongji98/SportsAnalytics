@@ -1,30 +1,117 @@
-List all Pase Exitoso with a duration greater than 4 seconds
+1. List all Pase Exitoso with a duration greater than 4 seconds
 Solution:
--
--
--
+db = db.getSiblingDB("football");
+db.getCollection("event").find({
+    $and : [{"event_type":"Pase"},
+            {"success": "Exitoso"},
+            {"duration": {$gt:4}}]
+});
 
-List all different players who have shot ordered by origin_player
+2. List all different players who have shot ordered by origin_player
 Solution:
--
--
--
+db = db.getSiblingDB("football");
+db.getCollection("event").aggregate([
+    {
+      $match : {
+          "event_type": "Remate",
+          "event_subtype": {$in: ["No Gol", "Gol"]}
+      }
+    },
+    {
+      $group: {
+          _id: "$origin_player",
+          players: { $addToSet: "$origin_player" }
+      }
+    },
+    {
+        $project:{
+          _id: 0,
+          players: 1
+        }
+    },
+    {
+        $unwind: "$players"
+    },
+    {
+        $sort: {
+          players: 1
+      }
+    }
+]);
 
-Number of attacks from teams 1 and 11
+3. Number of attacks from teams 1 and 11
 Solution:
--
--
--
+db = db.getSiblingDB("football");
+db.getCollection("event").aggregate([
+    {
+        $match: {
+          "event_type" : "Ataque"
+        }
+    },
+    {
+        $group: {
+            _id: "$team",
+            team: { $addToSet: "$team"},
+            attack_num: {$sum : 1}
+        }
+    },
+    {
+        $unwind: "$team"
+    },
+    {
+        $project:{
+            _id: 0,
+            team: 1,
+            attack_num: 1
+        }
+    },
+    {
+        $sort: {
+            "team": 1
+        }
+    }
+]);
 
-Remove all Event whose origin is less than 0.0 or greater than 1.0
+4. Remove all Event whose origin is less than 0.0 or greater than 1.0
 Solution:
--
--
--
+db.getCollection("event").deleteMany(
+    {
+        $or: [
+            {"origin_pos_y": {$lt: 0.0}},
+            {"origin_pos_x": {$lt: 0.0}},
+            {"origin_pos_y": {$gt: 1.0}},
+            {"origin_pos_x": {$gt: 1.0}},
+        ]
+    }
+);
 
-Compute the distance of each event named distance
+5. Compute the distance of each event named distance
 Hint: The pitch dimensions are 105 meters for x-axis and 68 meters for y-axis
 Solution:
--
--
--
+db.getCollection("event").aggregate([
+    {
+        $project:{
+            _id: 1,
+            distance: {
+                $sqrt: {
+                    $sum: [{
+                         $pow: [{$subtract: [{
+                                 $multiply : ["$destination_pos_x", 105]
+                             },
+                             {
+                                 $multiply :["$origin_pos_x", 105]
+                             }
+                             ]}, 2]
+                    },
+                    {
+                         $pow: [{$subtract: [{
+                             $multiply : ["$destination_pos_y", 68]
+                         }, {
+                             $multiply : ["$origin_pos_y", 68]
+                         }]}, 2]
+                    }]
+                }
+            }
+        }
+    }
+]);

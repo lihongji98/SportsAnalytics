@@ -1,7 +1,5 @@
 import numpy as np
 from InfluenceArea import InfluenceArea
-import matplotlib.pyplot as plt
-
 """
 Pitch Control = Sigmoid(sum(home_area_influence) - sum(away_area_influence))
 
@@ -9,18 +7,11 @@ Required data:
     player information (from database)
             ===> 
             player_influence_surface = Influence.area_influence_surface(
-                                                                player_pos, 
-                                                                player_vel,
-                                                                player_ang,
-                                                                ball_dist
+                                                                xy, 
+                                                                vel,
+                                                                ang,
+                                                                distance
                                                                 )
-
-
-TODO:
-1. Regularize the dataflow format
-2. Complete the pitch control computation
-3. Figure out the default attribute the PitchControl attributes
-    need read_data function or not
 """
 
 

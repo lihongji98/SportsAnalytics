@@ -102,14 +102,12 @@ def exercise_7():
 
     origin_player_df = pd.DataFrame(database.Event.objects(event_type__in=["Balon al Pie", "Pase", "Remate"],
                                                            origin_player__nin=[None]).
-                                    only("match_id", "team", "origin_player").as_pymongo()) \
-        [['match_id', 'team', 'origin_player']]
+                                    only("match_id", "team", "origin_player").as_pymongo())[['match_id', 'team', 'origin_player']]
     origin_player_df.rename(columns={'origin_player': 'player'}, inplace=True)
 
     destination_player_df = pd.DataFrame(database.Event.objects(event_type="Pase",
                                                                 destination_player__nin=[None]).
-                                         only("match_id", "team", "destination_player").as_pymongo()) \
-        [['match_id', 'team', 'destination_player']]
+                                         only("match_id", "team", "destination_player").as_pymongo())[['match_id', 'team', 'destination_player']]
     destination_player_df.rename(columns={'destination_player': 'player'}, inplace=True)
 
     player_df = pd.concat([origin_player_df, destination_player_df], axis=0, ignore_index=True).drop_duplicates()

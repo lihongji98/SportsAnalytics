@@ -4,9 +4,9 @@ from position import position
 
 
 def draw_heatmap(data):
-    plt.imshow(data, cmap='viridis', interpolation='nearest')
+    plt.imshow(data, cmap='coolwarm', interpolation='nearest')
     plt.gca().invert_yaxis()
-    plt.colorbar(label='AreaInfluence')
+    plt.title('Home_Pitch_Control')
     plt.show()
 
 
